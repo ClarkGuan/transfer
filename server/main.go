@@ -55,7 +55,7 @@ func Main(args []string) error {
 	for atomic.LoadInt32(&flag) == 0 {
 		conn, err := listener.Accept()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error: %s", err)
+			fmt.Fprintf(os.Stderr, "error: %s\n", err)
 			continue
 		}
 
@@ -73,7 +73,7 @@ func handleConn(conn net.Conn, dir string) {
 	lenBuf := make([]byte, 4)
 	_, err := io.ReadFull(conn, lenBuf)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s: %v", conn.RemoteAddr(), err)
+		fmt.Fprintf(os.Stderr, "%s: %v\n", conn.RemoteAddr(), err)
 		return
 	}
 	len := binary.BigEndian.Uint32(lenBuf)
@@ -81,14 +81,14 @@ func handleConn(conn net.Conn, dir string) {
 	buf := make([]byte, len)
 	_, err = io.ReadFull(conn, buf)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s: %v", conn.RemoteAddr(), err)
+		fmt.Fprintf(os.Stderr, "%s: %v\n", conn.RemoteAddr(), err)
 		return
 	}
 
 	files := new(model.Files)
 	err = proto.Unmarshal(buf, files)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s: %v", conn.RemoteAddr(), err)
+		fmt.Fprintf(os.Stderr, "%s: %v\n", conn.RemoteAddr(), err)
 		return
 	}
 
@@ -96,7 +96,7 @@ func handleConn(conn net.Conn, dir string) {
 		if newPath, err := saveFile(file, dir); err == nil {
 			fmt.Printf("File saved successful: remote(%s) -> local(%s)\n", file.GetName(), newPath)
 		} else {
-			fmt.Fprintf(os.Stderr, "File saved failed: %s", err)
+			fmt.Fprintf(os.Stderr, "File saved failed: %s\n", err)
 		}
 	}
 }
