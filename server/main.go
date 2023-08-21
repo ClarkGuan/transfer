@@ -35,6 +35,10 @@ func Main(args []string) error {
 	}
 	defer listener.Close()
 
+	if err := displayNetworkInterfaces(); err != nil {
+		return err
+	}
+
 	localAddr := listener.Addr()
 	fmt.Printf("listener: %s", localAddr)
 
@@ -120,4 +124,18 @@ func saveFile(file *model.File, dir string) (string, error) {
 		return "", err
 	}
 	return abs, nil
+}
+
+func displayNetworkInterfaces() error {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("local network interface addrs:")
+	for _, addr := range addrs {
+		fmt.Println(addr)
+	}
+
+	return nil
 }
